@@ -37,11 +37,15 @@
     </div>
     <h1>HACK THE<br>ROUTER</h1>
     <p class="subtitle">Take a ten-euro router apart until it gives up a root shell: find the debug pads, break in over UART, and lift its firmware straight off the flash chip. A hands-on hardware hacking workshop by <b><a href="https://warpnet.nl" target="_blank" rel="noopener">Warpnet</a></b>, built around the TP-Link TL-WR841N <b>v14.20</b> and <b>v14.0</b>.</p>
+    <div class="cta">
+      <a class="btn-primary" href="https://warpnet.nl/contact/" target="_blank" rel="noopener">↗ Request this training</a>
+      <span class="cta-note">// For your team, meetup or conference</span>
+    </div>
   </header>
 
   <!-- TABLE OF CONTENTS -->
   <nav class="toc" aria-label="Contents">
-    <div class="toc-label">// Contents</div>
+    <div class="toc-label">// Memory map <span>(4 MiB SPI NOR)</span></div>
     <ul>
       <li><a href="#trainers">Your trainers</a></li>
       <li><a href="#hardware-hacking">What is hardware hacking?</a></li>
@@ -49,15 +53,16 @@
       <li><a href="#kit">Your kit</a></li>
       <li><a href="#further-reading">Further reading</a></li>
       <li><a href="#whats-next">What's next</a></li>
+      <li><a href="#score-section">Your score</a></li>
       <li><a href="#section-1">Section 1 · Initial recon &amp; OSINT</a></li>
       <li><a href="#section-2">Section 2 · The debug port</a></li>
       <li><a href="#section-3">Section 3 · SPI dump &amp; firmware</a></li>
       <li><a href="#recap">Recap</a></li>
-      <li><a href="#score-section">Your score</a></li>
       <li><a href="#quick-reference">Quick reference</a></li>
       <li><a href="#troubleshooting">Troubleshooting</a></li>
       <li><a href="#going-deeper">Going deeper</a></li>
       <li><a href="#brag">Brag about it</a></li>
+      <li><a href="#about-warpnet">About Warpnet</a></li>
     </ul>
   </nav>
 
@@ -196,6 +201,28 @@
     Grab your board, check your kit against the list above, and read the disclaimer once more. When you're set, the first section starts with turning the router over and reading its label.
   </div>
 
+  <!-- SCORE -->
+  <h2 id="score-section">Your score</h2>
+  <div class="score" id="score">
+    <div class="label">// Total points captured</div>
+    <div class="digits">
+      <span class="total" id="scoreTotal">0</span>
+      <span class="of">/ <span id="scoreMax">0</span> pts</span>
+    </div>
+    <div class="bar"><div class="fill" id="scoreFill"></div></div>
+    <div class="meta-row">
+      <span><span id="scoreCount">0</span> / <span id="scoreOf">0</span> objectives</span>
+      <span class="rank" id="scoreRank">SCREWDRIVER ROOKIE</span>
+    </div>
+    <button class="reset" id="scoreReset" type="button">Reset all</button>
+
+    <div class="celebration" id="celebration" role="status" aria-live="polite">
+      <div class="crown">🔓</div>
+      <div class="title">Firmware Overlord</div>
+      <div class="sub">// All objectives captured. The router is yours, byte for byte.</div>
+    </div>
+  </div>
+
   <!-- ============ CHALLENGES ============ -->
   <h2 id="section-1">Section 1 // Initial recon &amp; OSINT</h2>
   <p>Before you pick up a screwdriver, learn everything the internet already knows about this box. Then open it up and read the board. Tick each task off as you clear it; your progress is saved on this device.</p>
@@ -302,28 +329,38 @@
         </marker>
       </defs>
 
-      <!-- Adapter body -->
-      <rect x="40" y="48" width="150" height="210" rx="4" fill="rgba(150,175,245,0.04)" stroke="#96aff5" stroke-opacity="0.5"/>
-      <text x="115" y="78" text-anchor="middle" fill="#96aff5" font-size="16" font-weight="700">CP2102</text>
-      <text x="115" y="96" text-anchor="middle" fill="#9aa3c4" font-size="11">USB-UART</text>
+      <!-- Adapter body: IC package with pin-1 dot and pin stubs top and bottom -->
+      <rect x="40" y="48" width="150" height="210" fill="#0a0a1c" stroke="#96aff5" stroke-opacity="0.6"/>
+      <circle cx="52" cy="60" r="3" fill="#96aff5" fill-opacity="0.6"/>
+      <g fill="#96aff5" fill-opacity="0.45">
+        <rect x="60" y="41" width="8" height="7"/><rect x="80" y="41" width="8" height="7"/><rect x="100" y="41" width="8" height="7"/><rect x="120" y="41" width="8" height="7"/><rect x="140" y="41" width="8" height="7"/><rect x="160" y="41" width="8" height="7"/>
+        <rect x="60" y="258" width="8" height="7"/><rect x="80" y="258" width="8" height="7"/><rect x="100" y="258" width="8" height="7"/><rect x="120" y="258" width="8" height="7"/><rect x="140" y="258" width="8" height="7"/><rect x="160" y="258" width="8" height="7"/>
+      </g>
+      <text x="115" y="82" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">CP2102</text>
+      <text x="115" y="100" text-anchor="middle" fill="#96aff5" font-size="10" letter-spacing="1.5">// USB-UART</text>
 
       <!-- Board body -->
-      <rect x="570" y="48" width="150" height="210" rx="4" fill="rgba(150,175,245,0.04)" stroke="#96aff5" stroke-opacity="0.5"/>
-      <text x="645" y="78" text-anchor="middle" fill="#96aff5" font-size="16" font-weight="700">TL-WR841N</text>
-      <text x="645" y="96" text-anchor="middle" fill="#9aa3c4" font-size="11">UART header</text>
+      <rect x="570" y="48" width="150" height="210" fill="#0a0a1c" stroke="#96aff5" stroke-opacity="0.6"/>
+      <circle cx="582" cy="60" r="3" fill="#96aff5" fill-opacity="0.6"/>
+      <g fill="#96aff5" fill-opacity="0.45">
+        <rect x="590" y="41" width="8" height="7"/><rect x="610" y="41" width="8" height="7"/><rect x="630" y="41" width="8" height="7"/><rect x="650" y="41" width="8" height="7"/><rect x="670" y="41" width="8" height="7"/><rect x="690" y="41" width="8" height="7"/>
+        <rect x="590" y="258" width="8" height="7"/><rect x="610" y="258" width="8" height="7"/><rect x="630" y="258" width="8" height="7"/><rect x="650" y="258" width="8" height="7"/><rect x="670" y="258" width="8" height="7"/><rect x="690" y="258" width="8" height="7"/>
+      </g>
+      <text x="645" y="82" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="700">TL-WR841N</text>
+      <text x="645" y="100" text-anchor="middle" fill="#96aff5" font-size="10" letter-spacing="1.5">// UART HEADER</text>
 
-      <!-- Adapter pin leads + dots -->
+      <!-- Adapter pin leads + pads -->
       <g stroke="#96aff5" stroke-width="2">
         <line x1="190" y1="128" x2="238" y2="128"/>
         <line x1="190" y1="168" x2="238" y2="168"/>
         <line x1="190" y1="208" x2="238" y2="208"/>
         <line x1="190" y1="240" x2="238" y2="240"/>
       </g>
-      <g fill="#96aff5">
-        <circle cx="238" cy="128" r="3.5"/>
-        <circle cx="238" cy="168" r="3.5"/>
-        <circle cx="238" cy="208" r="3.5"/>
-        <circle cx="238" cy="240" r="3.5"/>
+      <g fill="#050520" stroke="#96aff5" stroke-width="2">
+        <rect x="234" y="124" width="8" height="8"/>
+        <rect x="234" y="164" width="8" height="8"/>
+        <rect x="234" y="204" width="8" height="8"/>
+        <rect x="234" y="236" width="8" height="8"/>
       </g>
       <g fill="#c9d2ee" font-size="13" text-anchor="end">
         <text x="180" y="132">RX</text>
@@ -332,18 +369,18 @@
         <text x="180" y="244">3V3</text>
       </g>
 
-      <!-- Board pin leads + dots -->
+      <!-- Board pin leads + pads -->
       <g stroke="#96aff5" stroke-width="2">
         <line x1="522" y1="128" x2="570" y2="128"/>
         <line x1="522" y1="168" x2="570" y2="168"/>
         <line x1="522" y1="208" x2="570" y2="208"/>
         <line x1="522" y1="240" x2="570" y2="240"/>
       </g>
-      <g fill="#96aff5">
-        <circle cx="522" cy="128" r="3.5"/>
-        <circle cx="522" cy="168" r="3.5"/>
-        <circle cx="522" cy="208" r="3.5"/>
-        <circle cx="522" cy="240" r="3.5"/>
+      <g fill="#050520" stroke="#96aff5" stroke-width="2">
+        <rect x="518" y="124" width="8" height="8"/>
+        <rect x="518" y="164" width="8" height="8"/>
+        <rect x="518" y="204" width="8" height="8"/>
+        <rect x="518" y="236" width="8" height="8"/>
       </g>
       <g fill="#c9d2ee" font-size="13" text-anchor="start">
         <text x="580" y="132">RX</text>
@@ -352,17 +389,24 @@
         <text x="580" y="244">VCC</text>
       </g>
 
-      <!-- Data lines (crossed) with signal-direction arrows -->
-      <path d="M522,168 C 420,168 340,128 238,128" fill="none" stroke="#96aff5" stroke-width="2" marker-end="url(#uart-arrow)"/>
-      <path d="M238,168 C 340,168 420,128 522,128" fill="none" stroke="#96aff5" stroke-width="2" marker-end="url(#uart-arrow)"/>
+      <!-- Data lines (crossed); arrows stop short of the pads so they stay readable -->
+      <path d="M518,168 C 420,168 340,128 252,128" fill="none" stroke="#96aff5" stroke-width="2" marker-end="url(#uart-arrow)"/>
+      <path d="M242,168 C 340,168 420,128 508,128" fill="none" stroke="#96aff5" stroke-width="2" marker-end="url(#uart-arrow)"/>
       <!-- Shared ground -->
-      <path d="M238,208 L522,208" fill="none" stroke="#9aa3c4" stroke-width="2"/>
+      <path d="M242,208 L518,208" fill="none" stroke="#9aa3c4" stroke-width="2"/>
       <!-- Power line: do not connect -->
-      <path d="M238,240 L522,240" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="6 5" opacity="0.85"/>
+      <path d="M242,240 L518,240" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="6 5" opacity="0.85"/>
       <path d="M373,233 L387,247 M387,233 L373,247" stroke="#ff6b6b" stroke-width="2.5"/>
 
-      <text x="380" y="114" text-anchor="middle" fill="#9aa3c4" font-size="11">TX / RX crossed</text>
-      <text x="380" y="272" text-anchor="middle" fill="#ff6b6b" font-size="11">leave 3V3 unconnected</text>
+      <!-- Callouts with leader lines, drafting style -->
+      <g stroke="#9aa3c4" stroke-width="1" fill="none">
+        <path d="M380,148 L380,86 L400,86"/>
+        <path d="M380,247 L380,276 L400,276"/>
+      </g>
+      <circle cx="380" cy="148" r="2.5" fill="#9aa3c4"/>
+      <text x="406" y="90" fill="#9aa3c4" font-size="10.5" letter-spacing="1.2">TX → RX, CROSSED</text>
+      <text x="406" y="280" fill="#ff6b6b" font-size="10.5" letter-spacing="1.2">NC · LEAVE 3V3 UNCONNECTED</text>
+      <text x="380" y="201" text-anchor="middle" fill="#9aa3c4" font-size="10" letter-spacing="1.2">COMMON GROUND</text>
     </svg>
     <figcaption>Cross TX and RX, share GND, and leave VCC unconnected. The board powers itself.</figcaption>
   </figure>
@@ -529,28 +573,6 @@ PY</pre>
     Every device around you is a version of this box. Pick a cheaper, weirder target next time, and remember the one rule that never bends: only ever hack hardware you own or are explicitly authorised to test.
   </div>
 
-  <!-- SCORE -->
-  <h2 id="score-section">Your score</h2>
-  <div class="score" id="score">
-    <div class="label">// Total points captured</div>
-    <div class="digits">
-      <span class="total" id="scoreTotal">0</span>
-      <span class="of">/ <span id="scoreMax">0</span> pts</span>
-    </div>
-    <div class="bar"><div class="fill" id="scoreFill"></div></div>
-    <div class="meta-row">
-      <span><span id="scoreCount">0</span> / <span id="scoreOf">0</span> objectives</span>
-      <span class="rank" id="scoreRank">SCREWDRIVER ROOKIE</span>
-    </div>
-    <button class="reset" id="scoreReset" type="button">Reset all</button>
-
-    <div class="celebration" id="celebration" role="status" aria-live="polite">
-      <div class="crown">🔓</div>
-      <div class="title">Firmware Overlord</div>
-      <div class="sub">// All objectives captured. The router is yours, byte for byte.</div>
-    </div>
-  </div>
-
   <!-- Confetti container, populated by JS on completion -->
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
@@ -676,6 +698,43 @@ PY</pre>
 
     <p class="share-tip">Tip: in the composer, type <code class="inline">@</code> then the name to get a real @-mention. It won't auto-link from a paste.</p>
   </div>
+
+  <!-- ABOUT WARPNET -->
+  <h2 id="about-warpnet">About Warpnet</h2>
+  <p><a href="https://warpnet.nl" target="_blank" rel="noopener"><b>Warpnet</b></a> is a Dutch IT security specialist, <b>securing technology since 1996</b>. Its mission is to make the Netherlands a safer place by making security knowledge available and actively sharing it with others. Workshops like this one are part of that: you learn more from popping a shell yourself than from reading about it.</p>
+
+  <h3>What we do</h3>
+  <dl class="pinout">
+    <dt>Pentesting</dt><dd>Penetration tests of <b>networks, cloud, web applications, and mobile apps</b>, finding the weak spots before someone else does.</dd>
+    <dt>SOC / MDR</dt><dd>A <b>Security Operations Center</b> and managed detection &amp; response that keep watch around the clock.</dd>
+    <dt>Cloud</dt><dd>Cloud engineering and <b>managed Kubernetes</b>, built secure from the start.</dd>
+    <dt>Training</dt><dd>Hands-on workshops like this one, where you break real hardware to learn how to defend it.</dd>
+  </dl>
+  <p>Warpnet is <b>ISO 27001</b> and <b>CCV Cyber Pentest</b> certified. Want this workshop, or a pentest, for your organisation? <a href="https://warpnet.nl/contact/" target="_blank" rel="noopener">Get in touch</a>.</p>
+
+  <!-- NEXT TRAINING -->
+  <section class="promo" aria-labelledby="automotive">
+    <div class="promo-label">// Next training · same trainer, bigger target</div>
+    <h2 id="automotive">Hands-on Automotive Systems</h2>
+<pre class="promo-can" aria-hidden="true"><span class="c">$ candump can0</span>
+  can0  <span class="k">280</span>   [8]  49 0E 1A 0B 0E 1A 00 1A
+  can0  <span class="k">5A0</span>   [8]  FF 3C 00 07 00 00 04 AD
+  can0  <span class="k">7E0</span>   [8]  02 10 03 00 00 00 00 00</pre>
+    <figure class="quote">
+      <img class="avatar" src="images/roald-nefs.png" alt="Roald Nefs" decoding="async">
+      <blockquote>
+        <p>Routers were the warm-up. In the automotive training you tap into a real CAN bus, spoof the immobilizer, and make an instrument cluster show whatever speed you like. No car required, just a bench supply.</p>
+        <figcaption><b>Roald Nefs</b> · CTO at Warpnet and Enlite</figcaption>
+      </blockquote>
+    </figure>
+    <ul class="promo-facts">
+      <li>VW Group instrument clusters on the bench</li>
+      <li>USB-to-CAN adapters, frames on the wire</li>
+      <li>In-browser tooling, nothing to install</li>
+      <li>Seven challenges with a live scoreboard</li>
+    </ul>
+    <a class="btn-primary" href="https://roaldnefs.github.io/car-hacking-village/" target="_blank" rel="noopener">↗ Explore the automotive training</a>
+  </section>
 
   <footer>
     <div class="row">
